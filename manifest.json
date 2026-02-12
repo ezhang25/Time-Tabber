@@ -1,0 +1,26 @@
+{
+    "name": "TabTimer",
+    "description": "Extension that allows you to keep track of your time spent on each Google tab",
+    "version": "1.0",
+    "manifest_version": 3,
+
+    "action": {
+    "default_popup": "index.html",
+    "default_icon": "hourglass.png"
+    },
+
+    "background": {
+        "service_worker": "background.js"
+    },
+
+    "host_permissions": [
+        "<all_urls>"
+    ],
+
+    "permissions": [
+        "tabs",
+        "activeTab",
+        "idle",
+        "storage"
+    ]
+}
