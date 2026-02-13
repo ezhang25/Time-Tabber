@@ -23,18 +23,18 @@ async function isIdle(){
 }
 
 async function addSeconds(domain, secondsToAdd) {
-  const key = dateKey();
-  const data = await chrome.storage.local.get(key);
-  const totals = data[key] ?? {};
-  totals[domain] = (totals[domain] ?? 0) + secondsToAdd;
-  await chrome.storage.local.set({ [key]: totals });
+    const key = dateKey();
+    const data = await chrome.storage.local.get(key);
+    const totals = data[key] ?? {};
+    totals[domain] = (totals[domain] ?? 0) + secondsToAdd;
+    await chrome.storage.local.set({ [key]: totals });
 }
 
 setInterval(async () => {
-  if (!(await isIdle())) return;
+    if (!(await isIdle())) return;
 
-  const domain = await getActiveTabUrl();
-  if (!domain) return;
+    const domain = await getActiveTabUrl();
+    if (!domain) return;
 
-  await addSeconds(domain, 1);
+    await addSeconds(domain, 1);
 }, 1000);

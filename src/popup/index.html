@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="heading">
+        <h1 id="textheader">Time Tabber</h1>
+        <img id="icon" src="../../assets/hourglass.png"> 
+    </div>
+
+    <hr>
+
+    <h2 id="time"></h2>
+
+    <div class="top5">
+        <h3 id="mostused">Most Used Tabs Today</h3>
+        <ol>
+            <li id="used1"></li>
+            <li id="used2"></li>
+            <li id="used3"></li>
+            <li id="used4"></li>
+            <li id="used5"></li>
+        </ol>
+    </div>
+
+    <form id="url-form">
+        <div class="form-row">
+            <label for="url">Website URL:</label>
+            <input type="text" id="url">
+        </div>
+        <br>
+        <div class="form-row">
+            <label for="time-limit">Time Limit (Seconds):</label>
+            <input type="number" id="time-limit" min="1">
+        </div>
+        <br>
+        <div class="button">
+            <button id="button" type="submit">Set Time Limit</button>
+
+        </div>
+    </form>
+
+    <div class="time-limit-display">
+        <p id="current-limit">Current Time Limits:</p>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
