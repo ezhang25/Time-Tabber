@@ -27,15 +27,25 @@ async function renderTop5() {
 
     for (let i = 0; i < 5; i++) {
         const li = document.getElementById(`used${i + 1}`);
+        const link = document.getElementById(`used${i + 1}link`);
+
         if (!li) continue;
 
         if (top[i]) {
             const [domain, secs] = top[i];
-            li.textContent = `${domain} — ${formatTime(secs)}`;
+
+            if (link) {
+                link.textContent = `${domain} — ${formatTime(secs)}`;
+                link.href = `https://${domain}`;
+            } 
+            else {
+                li.textContent = `${domain} — ${formatTime(secs)}`;
+            }
         } 
         else {
             li.textContent = "";
         }
+
     }
 }
 
