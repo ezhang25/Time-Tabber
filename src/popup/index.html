@@ -4,87 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="index.css">
-    <title>Document</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Instrument+Serif&display=swap" rel="stylesheet">
+    <title>Time Tabber</title>
 </head>
 <body>
-    <div class="heading">
-        <h1 id="textheader">Time Tabber</h1>
-        <img id="icon" src="../../assets/hourglass.png"> 
-    </div>
-
-    <hr>
-
-    <h2 id="time"></h2>
-
-    <div class="top5">
-        <h3 id="mostused">Most Used Tabs Today:</h3>
-        <hr>
-        <ul>
-            <li id="used1">
-                <div class="usedbox">
-                    <h5>1.</h5>
-                    <a href="" id="used1link" target="_blank">
-                        <span id="used1text"></span>
-                    </a>
-                </div>
-            </li>
-
-            <li id="used2">
-                <div class="usedbox">
-                    <h5>2.</h5>
-                    <a href="" id="used2link" target="_blank">
-                        <span id="used2text"></span>
-                    </a>
-                </div>
-            </li>
-
-            <li id="used3">
-                <div class="usedbox">
-                    <h5>3.</h5>
-                    <a href="" id="used3link" target="_blank">
-                        <span id="used3text"></span>
-                    </a>
-                </div>
-            </li>
-
-            <li id="used4">
-                <div class="usedbox">
-                    <h5>4.</h5>
-                    <a href="" id="used4link" target="_blank">
-                        <span id="used4text"></span>
-                    </a>
-                </div>
-            </li>
-            <li id="used5">
-                <div class="usedbox">
-                    <h5>5.</h5>
-                    <a href="" id="used5link" target="_blank">
-                        <span id="used5text"></span>
-                    </a>
-                </div>
-            </li>
-        </ul>
-    </div>
-
-    <form id="url-form">
-        <div class="form-row">
-            <label for="url">Website URL:</label>
-            <input type="text" id="url">
+    <div class="popup">
+        <div class="header">
+            <div class="heading">
+                <div class="logo-icon">⏳</div>
+                <h1 id="textheader">Time Tabber</h1>
+            </div>
+            <div class="total-time-card">
+                <div class="total-label">Screentime today</div>
+                <h2 id="time"></h2>
+            </div>
         </div>
-        <br>
-        <div class="form-row">
-            <label for="time-limit">Time Limit (Seconds):</label>
-            <input type="number" id="time-limit" min="1">
-        </div>
-        <br>
-        <div class="button">
-            <button id="timebutton" type="submit">Set Time Limit</button>
 
+        <div class="section">
+            <div class="section-title">
+                <h3 id="mostused">Most Visited</h3>
+            </div>
+            <div class="top5">
+                <ul>
+                    <li id="used1">
+                        <div class="usedbox">
+                            <div class="site-rank rank-1"><h5>1</h5></div>
+                            <a href="" id="used1link" target="_blank">
+                                <span id="used1text"></span>
+                            </a>
+                        </div>
+                    </li>
+                    <li id="used2">
+                        <div class="usedbox">
+                            <div class="site-rank rank-2"><h5>2</h5></div>
+                            <a href="" id="used2link" target="_blank">
+                                <span id="used2text"></span>
+                            </a>
+                        </div>
+                    </li>
+                    <li id="used3">
+                        <div class="usedbox">
+                            <div class="site-rank rank-3"><h5>3</h5></div>
+                            <a href="" id="used3link" target="_blank">
+                                <span id="used3text"></span>
+                            </a>
+                        </div>
+                    </li>
+                    <li id="used4">
+                        <div class="usedbox">
+                            <div class="site-rank rank-other"><h5>4</h5></div>
+                            <a href="" id="used4link" target="_blank">
+                                <span id="used4text"></span>
+                            </a>
+                        </div>
+                    </li>
+                    <li id="used5">
+                        <div class="usedbox">
+                            <div class="site-rank rank-other"><h5>5</h5></div>
+                            <a href="" id="used5link" target="_blank">
+                                <span id="used5text"></span>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </form>
 
-    <div class="time-limit-display">
-        <p id="current-limit">Current Time Limits:</p>
+        <div class="limit-section">
+            <div class="limit-card">
+                <div class="limit-card-title">🛡 Set a time limit</div>
+                <form id="url-form">
+                    <div class="form-row">
+                        <input type="text" id="url" placeholder="e.g. reddit.com">
+                        <input type="number" id="time-limit" min="1" placeholder="60s">
+                    </div>
+                    <div class="button">
+                        <button id="timebutton" type="submit">Set Limit</button>
+                    </div>
+                </form>
+                <div class="time-limit-display">
+                    <div class="time-limit-header">Current Time Limits:</div>
+                    <div id="current-limit" class="limits-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">Time Tabber v1.0</div>
     </div>
 
     <script src="popup.js"></script>

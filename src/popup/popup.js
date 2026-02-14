@@ -61,6 +61,55 @@ async function getDailyScreenTime() {
     document.getElementById('time').textContent = `Screentime Today: ${formatTime(totalTime)}`;
 }
 
+function renderLimitTag(cleanUrl, seconds) {
+    const limitContainer = document.createElement("div");
+    limitContainer.classList.add("limit-tag");
+
+    const limitText = document.createElement("span");
+    limitText.classList.add("limit-tag-site");
+    limitText.textContent = cleanUrl;
+    limitContainer.appendChild(limitText);
+
+    const limitTime = document.createElement("span");
+    limitTime.classList.add("limit-tag-time");
+    limitTime.textContent = formatTime(seconds);
+    limitContainer.appendChild(limitTime);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.classList.add("limit-tag-remove");
+    removeBtn.textContent = "✕";
+    limitContainer.appendChild(removeBtn);
+
+    document.getElementById('current-limit').appendChild(limitContainer);
+
+    removeBtn.addEventListener('click', () => {
+        limitContainer.remove();
+        chrome.storage.local.remove(cleanUrl);
+    });
+}
+
+async function addTimeLimit(url, seconds) {
+    const cleanUrl = new URL(url.startsWith('http') ? url : 'https://' + url).hostname;
+
+    const result = await chrome.storage.local.get(cleanUrl);
+    if (result[cleanUrl]) {
+        alert(`Time limit for ${cleanUrl} is already set.`);
+        return;
+    }
+
+    chrome.storage.local.set({ [cleanUrl]: Number(seconds) });
+    renderLimitTag(cleanUrl, seconds);
+}
+
+function loadTimeLimits() {
+    chrome.storage.local.get(null, (items) => {
+        for (const [key, value] of Object.entries(items)) {
+            if (key.startsWith('dayTotals:')) continue;
+            renderLimitTag(key, value);
+        }
+    });
+}
+
 document.getElementById('url-form').addEventListener('submit', (event) => {
     event.preventDefault();
 
@@ -68,10 +117,11 @@ document.getElementById('url-form').addEventListener('submit', (event) => {
     const timeLimit = document.getElementById('time-limit').value;
 
     if (url && timeLimit) {
-        document.getElementById('current-limit').textContent += `\n${url}: ${timeLimit} seconds`;
+        addTimeLimit(url, timeLimit);
     }
 });
 
+loadTimeLimits();
 getDailyScreenTime();
 renderTop5();
 

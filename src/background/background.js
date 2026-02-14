@@ -1,3 +1,7 @@
+const notifiedLimits = new Set();
+
+console.log("BACKGROUND SCRIPT LOADED");
+
 function dateKey() {
     const now = new Date();
     const yyyy = now.getFullYear();
@@ -8,10 +12,9 @@ function dateKey() {
 
 async function getActiveTabUrl() {
     let queryOptions = { active: true, lastFocusedWindow: true };
-    
     let [tab] = await chrome.tabs.query(queryOptions);
 
-    if (tab && tab.url) {
+    if (tab && tab.url && tab.url.startsWith('http')) {
         const webUrl = new URL(tab.url);
         return webUrl.hostname.replace(/^www\./, "");
     }
@@ -30,11 +33,43 @@ async function addSeconds(domain, secondsToAdd) {
     await chrome.storage.local.set({ [key]: totals });
 }
 
+async function checkLimits(domain) {
+    const limitData = await chrome.storage.local.get(domain);
+    const limit = limitData[domain];
+
+    if (!limit) return;
+
+    const key = dateKey();
+    const data = await chrome.storage.local.get(key);
+    const totals = data[key] ?? {};
+    const currentTime = totals[domain] ?? 0;
+
+    if (currentTime >= limit) {
+        if (notifiedLimits.has(domain)) return;
+        notifiedLimits.add(domain);
+        chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+            if (tabs[0]) {
+                chrome.scripting.executeScript({
+                    target: { tabId: tabs[0].id },
+                    func: (domain) => {
+                        alert(`You've reached your time limit for ${domain}!`);
+                },
+                    args: [domain]
+                });
+            }
+     });
+    }
+}
+
 setInterval(async () => {
+    console.log("a");
     if (!(await isIdle())) return;
+    console.log("b");
 
     const domain = await getActiveTabUrl();
     if (!domain) return;
 
     await addSeconds(domain, 1);
+    await checkLimits(domain);
+    console.log("c");
 }, 1000);
