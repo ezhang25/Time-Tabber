@@ -89,7 +89,25 @@ function renderLimitTag(cleanUrl, seconds) {
 }
 
 async function addTimeLimit(url, seconds) {
-    const cleanUrl = new URL(url.startsWith('http') ? url : 'https://' + url).hostname;
+    let cleanUrl;
+    try {
+        cleanUrl = new URL(url.startsWith('http') ? url : 'https://' + url).hostname;
+    } 
+    catch {
+        alert('Please enter a valid URL');
+        return;
+    }
+
+    if (!cleanUrl || !cleanUrl.includes('.')) {
+        alert('Please enter a valid URL');
+        return;
+    }
+
+    const domainRegex = /^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
+    if (!cleanUrl || !domainRegex.test(cleanUrl)) {
+        alert('Please enter a valid URL');
+        return;
+    }
 
     const result = await chrome.storage.local.get(cleanUrl);
     if (result[cleanUrl]) {

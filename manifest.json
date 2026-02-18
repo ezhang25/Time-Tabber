@@ -30,6 +30,7 @@
         "idle",
         "storage",
         "notifications",
-        "scripting"
+        "scripting",
+        "alarms"
     ]
 }

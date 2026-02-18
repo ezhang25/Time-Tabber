@@ -1,4 +1,6 @@
 const notifiedLimits = new Set();
+let lastActiveDomain = null;
+let lastTimestamp = null;
 
 console.log("BACKGROUND SCRIPT LOADED");
 
@@ -18,14 +20,16 @@ async function getActiveTabUrl() {
         const webUrl = new URL(tab.url);
         return webUrl.hostname.replace(/^www\./, "");
     }
+    return null;
 }
 
-async function isIdle(){
+async function isActive() {
     const currentState = await chrome.idle.queryState(15);
     return currentState === "active";
 }
 
 async function addSeconds(domain, secondsToAdd) {
+    if (secondsToAdd <= 0) return;
     const key = dateKey();
     const data = await chrome.storage.local.get(key);
     const totals = data[key] ?? {};
@@ -53,23 +57,85 @@ async function checkLimits(domain) {
                     target: { tabId: tabs[0].id },
                     func: (domain) => {
                         alert(`You've reached your time limit for ${domain}!`);
-                },
+                    },
                     args: [domain]
                 });
             }
-     });
+        });
     }
 }
 
-setInterval(async () => {
-    console.log("a");
-    if (!(await isIdle())) return;
-    console.log("b");
+async function flushTime() {
+    if (lastActiveDomain && lastTimestamp) {
+        const now = Date.now();
+        const elapsed = Math.round((now - lastTimestamp) / 1000);
+        await addSeconds(lastActiveDomain, elapsed);
+        await checkLimits(lastActiveDomain);
+        lastTimestamp = now;
+    }
+}
+
+async function track() {
+    const active = await isActive();
+
+    if (!active) {
+        await flushTime();
+        lastActiveDomain = null;
+        lastTimestamp = null;
+        return;
+    }
 
     const domain = await getActiveTabUrl();
-    if (!domain) return;
+    if (!domain) {
+        await flushTime();
+        lastActiveDomain = null;
+        lastTimestamp = null;
+        return;
+    }
 
-    await addSeconds(domain, 1);
-    await checkLimits(domain);
-    console.log("c");
+    if (domain !== lastActiveDomain) {
+        await flushTime();
+        lastActiveDomain = domain;
+        lastTimestamp = Date.now();
+    }
+
+    if (!lastTimestamp) {
+        lastTimestamp = Date.now();
+    }
+
+    await flushTime();
+}
+
+chrome.alarms.create('tracker', { periodInMinutes: 0.5 });
+
+chrome.alarms.onAlarm.addListener(async (alarm) => {
+    if (alarm.name === 'tracker') {
+        await track();
+    }
+});
+
+chrome.tabs.onActivated.addListener(async () => {
+    await track();
+});
+
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
+    if (changeInfo.url) {
+        await track();
+    }
+});
+
+chrome.windows.onFocusChanged.addListener(async () => {
+    await track();
+});
+
+chrome.runtime.onStartup.addListener(() => {
+    chrome.alarms.create('tracker', { periodInMinutes: 0.5 });
+});
+
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.alarms.create('tracker', { periodInMinutes: 0.5 });
+});
+
+setInterval(async () => {
+    await track();
 }, 1000);
